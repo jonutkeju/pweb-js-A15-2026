@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Masuk — Mini Shopee</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+    rel="stylesheet"
+  />
+  <link rel="stylesheet" href="style2.css" />
+</head>
+<body>
+  <div class="auth-page">
+
+    <aside class="auth-brand">
+      <div class="brand-shapes" aria-hidden="true">
+        <span class="shape shape-tag"></span>
+        <span class="shape shape-bag"></span>
+        <span class="shape shape-dot"></span>
+      </div>
+      <div class="brand-content">
+        <p class="brand-mark">Mini Shopee</p>
+        <h2 class="brand-tagline">Belanja apa aja,<br />kapan aja.</h2>
+        <p class="brand-sub">Ribuan produk menunggu di katalog kamu.</p>
+      </div>
+    </aside>
+
+
+    <main class="auth-form-panel">
+      <div class="auth-card">
+        <h1>Masuk ke akunmu</h1>
+        <p class="auth-subtitle">Gunakan username &amp; password akunmu.</p>
+
+   
+        <form id="loginForm" class="auth-form" novalidate>
+          <div class="form-field">
+            <label for="username">Username</label>
+            <input
+              type="text"
+              id="username"
+              name="username"
+              placeholder="Masukkan username"
+              autocomplete="username"
+              required
+            />
+          </div>
+
+          <div class="form-field">
+            <label for="password">Password</label>
+            <input
+              type="password"
+              id="password"
+              name="password"
+              placeholder="Masukkan password"
+              autocomplete="current-password"
+              required
+            />
+          </div>
+
+          <p id="errorMessage" class="error-message" role="alert" hidden></p>
+
+          <button type="submit" id="loginButton" class="btn-primary">
+            <span class="btn-text">Masuk</span>
+            <span class="btn-spinner" hidden></span>
+          </button>
+        </form>
+
+        <p class="auth-hint">
+          Pakai akun dummy dari
+          <a href="https://dummyjson.com/users" target="_blank" rel="noopener"
+            >dummyjson.com/users</a
+          >
+        </p>
+      </div>
+    </main>
+  </div>
+
+ 
+</body>
+</html>

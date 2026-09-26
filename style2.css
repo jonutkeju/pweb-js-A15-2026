@@ -1,0 +1,295 @@
+
+:root {
+  --navy: #1f2a44;
+  --navy-deep: #16203a;
+  --amber: #e3993a;
+  --amber-hover: #cf8a2f;
+  --cream: #fdf9f3;
+  --text-main: #1f2a44;
+  --text-muted: #6b7280;
+  --border: #e6e5e0;
+  --error: #c0392b;
+  --error-bg: #fbeae8;
+  --radius: 14px;
+  --shadow: 0 20px 40px -20px rgba(31, 42, 68, 0.35);
+  font-family: "Plus Jakarta Sans", system-ui, -apple-system, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  color: var(--text-main);
+  background: var(--cream);
+}
+
+.auth-page {
+  display: flex;
+  min-height: 100vh;
+}
+
+/* Brand panel*/
+
+.auth-brand {
+  position: relative;
+  flex: 1 1 42%;
+  background: linear-gradient(155deg, var(--navy) 0%, var(--navy-deep) 100%);
+  color: #fff;
+  padding: 56px 48px;
+  display: flex;
+  align-items: flex-end;
+  overflow: hidden;
+}
+
+.brand-shapes {
+  position: absolute;
+  inset: 0;
+}
+
+.shape {
+  position: absolute;
+  border-radius: 50%;
+  opacity: 0.16;
+}
+
+.shape-tag {
+  width: 220px;
+  height: 220px;
+  background: var(--amber);
+  top: -60px;
+  right: -60px;
+  border-radius: 30% 70% 65% 35% / 40% 45% 55% 60%;
+}
+
+.shape-bag {
+  width: 160px;
+  height: 160px;
+  border: 2px solid #fff;
+  border-radius: 24px;
+  top: 40%;
+  right: 12%;
+  transform: rotate(18deg);
+  opacity: 0.12;
+}
+
+.shape-dot {
+  width: 90px;
+  height: 90px;
+  background: #fff;
+  bottom: 14%;
+  left: -30px;
+  opacity: 0.08;
+}
+
+.brand-content {
+  position: relative;
+  z-index: 1;
+}
+
+.brand-mark {
+  font-weight: 700;
+  font-size: 15px;
+  letter-spacing: 0.02em;
+  color: var(--amber);
+  margin: 0 0 20px;
+}
+
+.brand-tagline {
+  font-size: clamp(28px, 3.4vw, 40px);
+  font-weight: 800;
+  line-height: 1.15;
+  margin: 0 0 14px;
+}
+
+.brand-sub {
+  font-size: 15px;
+  color: rgba(255, 255, 255, 0.7);
+  margin: 0;
+  max-width: 34ch;
+}
+
+/* Form panel */
+
+.auth-form-panel {
+  flex: 1 1 58%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 24px;
+}
+
+.auth-card {
+  width: 100%;
+  max-width: 380px;
+}
+
+.auth-card h1 {
+  font-size: 26px;
+  font-weight: 800;
+  margin: 0 0 8px;
+  color: var(--navy);
+}
+
+.auth-subtitle {
+  font-size: 14px;
+  color: var(--text-muted);
+  margin: 0 0 32px;
+}
+
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.form-field label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--navy);
+}
+
+.form-field input {
+  border: 1.5px solid var(--border);
+  border-radius: 10px;
+  padding: 12px 14px;
+  font-size: 15px;
+  font-family: inherit;
+  color: var(--text-main);
+  background: #fff;
+  outline: none;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.form-field input::placeholder {
+  color: #b7b6b0;
+}
+
+.form-field input:focus {
+  border-color: var(--amber);
+  box-shadow: 0 0 0 3px rgba(227, 153, 58, 0.18);
+}
+
+.error-message {
+  margin: -6px 0 0;
+  padding: 10px 12px;
+  border-radius: 8px;
+  background: var(--error-bg);
+  color: var(--error);
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+.btn-primary {
+  position: relative;
+  border: none;
+  border-radius: 10px;
+  padding: 13px 16px;
+  background: var(--amber);
+  color: #fff;
+  font-family: inherit;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  transition: background 0.15s ease, transform 0.05s ease;
+}
+
+.btn-primary:hover {
+  background: var(--amber-hover);
+}
+
+.btn-primary:active {
+  transform: translateY(1px);
+}
+
+.btn-primary:focus-visible {
+  outline: 3px solid rgba(227, 153, 58, 0.4);
+  outline-offset: 2px;
+}
+
+/* Loading state: teman JS tinggal toggle class "is-loading" pada #loginButton */
+.btn-primary.is-loading .btn-text {
+  visibility: hidden;
+}
+
+.btn-primary.is-loading .btn-spinner {
+  display: inline-block !important;
+}
+
+.btn-spinner {
+  position: absolute;
+  width: 18px;
+  height: 18px;
+  border: 2.5px solid rgba(255, 255, 255, 0.4);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.auth-hint {
+  margin: 22px 0 0;
+  font-size: 12.5px;
+  color: var(--text-muted);
+  text-align: center;
+}
+
+.auth-hint a {
+  color: var(--amber-hover);
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.auth-hint a:hover {
+  text-decoration: underline;
+}
+
+/* Responsive*/
+
+@media (max-width: 800px) {
+  .auth-page {
+    flex-direction: column;
+  }
+
+  .auth-brand {
+    flex: 0 0 auto;
+    padding: 36px 28px;
+    align-items: flex-start;
+    min-height: 200px;
+  }
+
+  .brand-tagline {
+    font-size: 26px;
+  }
+
+  .auth-form-panel {
+    padding: 32px 20px 48px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .btn-spinner {
+    animation: none;
+  }
+}
