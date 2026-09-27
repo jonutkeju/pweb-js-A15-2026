@@ -3,33 +3,20 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Mini Shopee - Katalog Produk</title>
-
-  <!-- CSS ditulis oleh teman kelompok (bagian CSS + JS total) -->
-  <link rel="stylesheet" href="style.css" />
+  <title>Asthmazon - Katalog Produk</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style2.css?v=5" />
 </head>
 <body>
-
-  <!-- ======================================================
-       NAVBAR
-       - Menampilkan ucapan selamat datang (diisi via JS dari localStorage)
-       - Search bar (nama atau kategori produk)
-       - Ikon keranjang dengan badge jumlah item
-       - Tombol Logout
-  ======================================================= -->
   <header class="navbar" id="navbar">
     <div class="navbar__brand">
-      <a href="index.html" class="navbar__logo">Mini Shopee</a>
+      <a href="Catalogpage.html?v=5" class="navbar__logo">Asthmazon</a>
     </div>
 
     <div class="navbar__search">
-      <input
-        type="text"
-        id="searchInput"
-        class="search-input"
-        placeholder="Cari produk atau kategori..."
-        autocomplete="off"
-      />
+      <input type="text" id="searchInput" class="search-input" placeholder="Cari produk atau kategori..." autocomplete="off" />
     </div>
 
     <div class="navbar__actions">
@@ -37,146 +24,78 @@
         <span class="cart-icon" aria-hidden="true">🛒</span>
         <span id="cartBadge" class="cart-badge">0</span>
       </button>
-
-      <span id="welcomeMessage" class="navbar__welcome">
-        Halo, <strong id="userFirstName">Guest</strong>
-      </span>
-
-      <button type="button" id="logoutButton" class="btn btn--logout">
-        Keluar
-      </button>
+      <span id="welcomeMessage" class="navbar__welcome">Halo, <strong id="userFirstName">Guest</strong></span>
+      <button type="button" id="logoutButton" class="btn btn--logout">Keluar</button>
     </div>
   </header>
 
-  <!-- ======================================================
-       FILTER & SORT BAR
-       - Filter kategori (diisi dinamis oleh JS dari data produk)
-       - Sort berdasarkan harga / rating
-       - Info jumlah produk yang tampil
-  ======================================================= -->
   <section class="toolbar" id="toolbar">
     <div class="toolbar__filters">
-      <label for="categoryFilter" class="toolbar__label">Kategori</label>
-      <select id="categoryFilter" class="select-input">
-        <option value="all">Semua kategori</option>
-        <!-- <option> lain di-generate dinamis via JS -->
-      </select>
+      <div class="toolbar__field">
+        <label for="categoryFilter" class="toolbar__label">Kategori</label>
+        <select id="categoryFilter" class="select-input">
+          <option value="all">Semua kategori</option>
+        </select>
+      </div>
 
-      <label for="sortSelect" class="toolbar__label">Urutkan</label>
-      <select id="sortSelect" class="select-input">
-        <option value="default">Default</option>
-        <option value="price-asc">Harga: Termurah</option>
-        <option value="price-desc">Harga: Termahal</option>
-        <option value="rating-desc">Rating: Tertinggi</option>
-        <option value="rating-asc">Rating: Terendah</option>
-      </select>
+      <div class="toolbar__field">
+        <label for="sortSelect" class="toolbar__label">Urutkan</label>
+        <select id="sortSelect" class="select-input">
+          <option value="default">Default</option>
+          <option value="price-asc">Harga: Termurah</option>
+          <option value="price-desc">Harga: Termahal</option>
+          <option value="rating-desc">Rating: Tertinggi</option>
+          <option value="rating-asc">Rating: Terendah</option>
+        </select>
+      </div>
     </div>
 
     <p class="toolbar__count" id="resultCount">Memuat produk...</p>
   </section>
 
-  <!-- ======================================================
-       MAIN CONTENT
-  ======================================================= -->
   <main class="main-content">
-
-    <!-- State: loading -->
     <div id="loadingState" class="state-message state-message--loading" hidden>
       <p>Memuat produk, mohon tunggu...</p>
     </div>
 
-    <!-- State: error (global error handling saat fetch produk gagal) -->
     <div id="errorState" class="state-message state-message--error" hidden>
       <p id="errorMessage">Gagal memuat produk. Silakan coba lagi.</p>
       <button type="button" id="retryButton" class="btn btn--primary">Coba Lagi</button>
     </div>
 
-    <!-- State: empty (hasil pencarian/filter tidak ditemukan) -->
     <div id="emptyState" class="state-message state-message--empty" hidden>
       <p>Produk tidak ditemukan.</p>
     </div>
 
-    <!-- Product Grid: kartu produk di-render secara dinamis oleh JS -->
-    <div
-      id="productGrid"
-      class="product-grid"
-      aria-live="polite"
-    >
-      <!--
-        Contoh struktur satu kartu produk yang akan digenerate JS:
+    <div id="productGrid" class="product-grid" aria-live="polite"></div>
 
-        <article class="product-card" data-id="1">
-          <span class="product-card__badge">-17%</span>
-          <img class="product-card__image" src="thumbnail.jpg" alt="Nama Produk" />
-          <div class="product-card__body">
-            <p class="product-card__category">fragrances</p>
-            <h3 class="product-card__name">Nama Produk</h3>
-            <div class="product-card__meta">
-              <span class="product-card__price">$99.99</span>
-              <span class="product-card__rating">★ 4.3</span>
-            </div>
-            <button type="button" class="btn btn--add-cart" data-id="1">
-              Tambah ke Keranjang
-            </button>
-          </div>
-        </article>
-      -->
-    </div>
-
-    <!-- Load More / Pagination -->
     <div class="load-more-wrapper">
-      <button type="button" id="loadMoreButton" class="btn btn--secondary" hidden>
-        Muat lebih banyak
-      </button>
+      <button type="button" id="loadMoreButton" class="btn btn--secondary" hidden>Muat lebih banyak</button>
     </div>
-
   </main>
 
-  <!-- ======================================================
-       PRODUCT DETAIL MODAL
-       - Dibuka saat kartu produk diklik (Event Delegation pada #productGrid)
-       - Ditutup via tombol close, klik overlay, atau tombol Escape
-  ======================================================= -->
   <div id="productModal" class="modal" hidden aria-hidden="true">
     <div class="modal__overlay" id="modalOverlay"></div>
-
     <div class="modal__content" role="dialog" aria-modal="true" aria-labelledby="modalProductName">
-      <button type="button" id="modalCloseButton" class="modal__close" aria-label="Tutup">
-        &times;
-      </button>
-
+      <button type="button" id="modalCloseButton" class="modal__close" aria-label="Tutup">&times;</button>
       <div class="modal__body">
         <img id="modalProductImage" class="modal__image" src="" alt="" />
-
         <div class="modal__details">
           <p id="modalProductCategory" class="modal__category"></p>
           <h2 id="modalProductName" class="modal__name"></h2>
           <p class="modal__brand">Brand: <span id="modalProductBrand"></span></p>
-
           <div class="modal__meta">
             <span id="modalProductPrice" class="modal__price"></span>
             <span id="modalProductRating" class="modal__rating"></span>
           </div>
-
           <p class="modal__stock">Stok tersedia: <span id="modalProductStock"></span></p>
           <p id="modalProductDescription" class="modal__description"></p>
-
-          <button type="button" id="modalAddCartButton" class="btn btn--primary" data-id="">
-            Tambah ke Keranjang
-          </button>
+          <button type="button" id="modalAddCartButton" class="btn btn--primary" data-id="">Tambah ke Keranjang</button>
         </div>
       </div>
     </div>
   </div>
 
-  <!--
-    Auth guard + logout (bagian kecil yang saya tangani).
-    Logika fetch produk, render, search debounce, filter, sort,
-    cart CRUD, load more, dan modal detail dikerjakan oleh
-    teman kelompok pada script.js (bagian CSS + JS total).
-  -->
-  <script src="auth-guard.js" defer></script>
-  <script src="script.js" defer></script>
-
+  <script src="script.js?v=2" defer></script>
 </body>
 </html>
