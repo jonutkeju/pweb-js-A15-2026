@@ -1,3 +1,4 @@
+const USER_KEY = 'asthmazonUser';
 const loginForm = document.getElementById('loginForm');
 const usernameInput = document.getElementById('username');
 const passwordInput = document.getElementById('password');
@@ -18,11 +19,6 @@ function showError(message) {
   errorMessage.hidden = false;
 }
 
-function clearError() {
-  errorMessage.textContent = '';
-  errorMessage.hidden = true;
-}
-
 async function loginUser(username, password) {
   const response = await fetch('https://dummyjson.com/users');
 
@@ -41,20 +37,21 @@ async function loginUser(username, password) {
   }
 
   localStorage.setItem(
-    'miniShopeeUser',
+    USER_KEY,
     JSON.stringify({
       firstName: matchedUser.firstName,
       username: matchedUser.username,
     })
   );
 
-  window.location.href = 'index.html?v=5';
+  window.location.href = 'index.html?v=15';
 }
 
 if (loginForm) {
   loginForm.addEventListener('submit', async (event) => {
     event.preventDefault();
-    clearError();
+    errorMessage.textContent = '';
+    errorMessage.hidden = true;
 
     const username = usernameInput.value.trim();
     const password = passwordInput.value.trim();
@@ -69,13 +66,18 @@ if (loginForm) {
     try {
       await loginUser(username, password);
     } catch (error) {
-      showError(error.message || 'Terjadi kesalahan saat login.');
+      const message = window.location.protocol === 'file:'
+        ? 'Browser membatasi akses login saat halaman dibuka langsung. Jalankan melalui server lokal, misalnya Live Server di VS Code.'
+        : error.message === 'Failed to fetch'
+          ? 'Tidak dapat terhubung ke DummyJSON. Periksa koneksi internet lalu coba lagi.'
+          : error.message || 'Terjadi kesalahan saat login.';
+      showError(message);
     } finally {
       setLoadingState(false);
     }
   });
 }
 
-if (localStorage.getItem('miniShopeeUser')) {
-  window.location.href = 'Catalogpage.html?v=5';
+if (localStorage.getItem(USER_KEY)) {
+  window.location.href = 'Catalogpage.html?v=15';
 }

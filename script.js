@@ -1,5 +1,6 @@
-﻿const USER_KEY = 'miniShopeeUser';
-const CART_KEY = 'miniShopeeCart';
+﻿const USER_KEY = 'asthmazonUser';
+const CART_KEY = 'asthmazonCart';
+const TRENDING_RATING = 4.5;
 
 const state = {
   products: [],
@@ -9,8 +10,6 @@ const state = {
   sort: 'default',
   search: '',
 };
-
-const currentPage = window.location.pathname.split('/').pop() || 'Catalogpage.html';
 
 const user = (() => {
   try {
@@ -22,18 +21,10 @@ const user = (() => {
   }
 })();
 
-if (!user && currentPage !== 'login.html') {
-  window.location.href = 'login.html';
-}
-
-if (user && currentPage === 'login.html') {
-  window.location.href = 'Catalogpage.html';
-}
-
 function formatCurrency(value) {
-  return new Intl.NumberFormat('id-ID', {
+  return new Intl.NumberFormat('en-US', {
     style: 'currency',
-    currency: 'IDR',
+    currency: 'USD',
     maximumFractionDigits: 0,
   }).format(value);
 }
@@ -41,23 +32,101 @@ function formatCurrency(value) {
 function getCartItems() {
   try {
     const raw = localStorage.getItem(CART_KEY);
-    return raw ? JSON.parse(raw) : [];
+    const items = raw ? JSON.parse(raw) : [];
+    return Array.isArray(items)
+      ? items.filter((item) =>
+          item && Number.isInteger(item.id) && Number.isInteger(item.quantity) &&
+          item.quantity > 0 && Number.isFinite(item.price)
+        )
+      : [];
   } catch (error) {
     localStorage.removeItem(CART_KEY);
     return [];
   }
 }
 
+function saveCartItems(items) {
+  localStorage.setItem(CART_KEY, JSON.stringify(items));
+  updateCartUI();
+  renderCart();
+}
+
 function updateCartUI() {
   const cartItems = getCartItems();
   const totalQuantity = cartItems.reduce((sum, item) => sum + (item.quantity || 0), 0);
-  const totalPrice = cartItems.reduce((sum, item) => sum + (item.quantity || 0) * (item.price || 0), 0);
 
   const cartBadge = document.getElementById('cartBadge');
-  const cartTotal = document.getElementById('cartTotal');
 
   if (cartBadge) cartBadge.textContent = String(totalQuantity);
-  if (cartTotal) cartTotal.textContent = formatCurrency(totalPrice);
+}
+
+function escapeHtml(value) {
+  return String(value).replace(/[&<>"']/g, (character) => ({
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&quot;',
+    "'": '&#39;',
+  })[character]);
+}
+
+function renderCart() {
+  const cartItemsElement = document.getElementById('cartItems');
+  const cartTotal = document.getElementById('cartTotal');
+  const clearCartButton = document.getElementById('clearCartButton');
+  if (!cartItemsElement || !cartTotal) return;
+
+  const cartItems = getCartItems();
+  cartItemsElement.innerHTML = cartItems.length
+    ? cartItems.map((item) => `
+        <article class="cart-item">
+          <img class="cart-item__image" src="${escapeHtml(item.thumbnail)}" alt="" />
+          <div class="cart-item__details">
+            <h3>${escapeHtml(item.title)}</h3>
+            <p>${formatCurrency(item.price)}</p>
+            <div class="cart-item__actions">
+              <button type="button" class="cart-quantity-button" data-cart-decrease="${item.id}" aria-label="Kurangi jumlah ${escapeHtml(item.title)}">−</button>
+              <span>${item.quantity}</span>
+              <button type="button" class="cart-quantity-button" data-cart-increase="${item.id}" aria-label="Tambah jumlah ${escapeHtml(item.title)}">+</button>
+              <button type="button" class="cart-remove-button" data-cart-remove="${item.id}">Hapus</button>
+            </div>
+          </div>
+          <strong class="cart-item__subtotal">${formatCurrency(item.price * item.quantity)}</strong>
+        </article>
+      `).join('')
+    : '<p class="cart-empty">Keranjang masih kosong.</p>';
+
+  const total = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
+  cartTotal.textContent = formatCurrency(total);
+  if (clearCartButton) clearCartButton.disabled = cartItems.length === 0;
+}
+
+function setCartOpen(isOpen) {
+  const cartModal = document.getElementById('cartModal');
+  const cartButton = document.getElementById('cartButton');
+  if (!cartModal) return;
+
+  if (isOpen) renderCart();
+  cartModal.hidden = !isOpen;
+  cartModal.setAttribute('aria-hidden', String(!isOpen));
+  if (cartButton) cartButton.setAttribute('aria-expanded', String(isOpen));
+}
+
+function updateCartQuantity(productId, change) {
+  const cartItems = getCartItems();
+  const item = cartItems.find((cartItem) => cartItem.id === productId);
+  if (!item) return;
+
+  item.quantity += change;
+  saveCartItems(cartItems.filter((cartItem) => cartItem.quantity > 0));
+}
+
+function removeFromCart(productId) {
+  saveCartItems(getCartItems().filter((item) => item.id !== productId));
+}
+
+function clearCart() {
+  saveCartItems([]);
 }
 
 function setWelcomeUser() {
@@ -92,19 +161,20 @@ function renderProducts() {
     productGrid.innerHTML = visibleProducts
       .map(
         (product) => `
-          <article class="product-card" data-product-id="${product.id}" tabindex="0">
+          <article class="product-card${product.rating >= TRENDING_RATING ? ' product-card--trending' : ''}" data-product-id="${product.id}" tabindex="0">
             <span class="product-card__badge">-${Math.round(product.discountPercentage)}%</span>
             <img class="product-card__image" src="${product.thumbnail}" alt="${product.title}" />
             <div class="product-card__body">
-              <p class="product-card__category">${product.category}</p>
               <h3 class="product-card__name">${product.title}</h3>
+              <div class="product-card__labels">
+                <p class="product-card__category">${product.category}</p>
+                ${product.rating >= TRENDING_RATING ? '<span class="product-card__trending">TRENDING!</span>' : ''}
+              </div>
               <div class="product-card__meta">
                 <span class="product-card__price">${formatCurrency(product.price)}</span>
+                <button type="button" class="btn btn--add-cart" data-add-cart="${product.id}" aria-label="Tambah ${product.title} ke keranjang">+</button>
                 <span class="product-card__rating">★ ${product.rating}</span>
               </div>
-              <button type="button" class="btn btn--add-cart" data-add-cart="${product.id}">
-                Tambah ke Keranjang
-              </button>
             </div>
           </article>
         `
@@ -117,6 +187,16 @@ function renderProducts() {
   if (loadMoreButton) {
     loadMoreButton.hidden = state.filteredProducts.length <= state.visibleCount;
   }
+}
+
+function debounce(callback, delay = 350) {
+  let timer;
+  return function (...args) {
+    clearTimeout(timer);
+    timer = setTimeout(() => {
+      callback.apply(this, args);
+    }, delay);
+  };
 }
 
 function applyFiltersAndRender() {
@@ -135,22 +215,17 @@ function applyFiltersAndRender() {
     );
   }
 
-  switch (state.sort) {
-    case 'price-asc':
-      result.sort((a, b) => a.price - b.price);
-      break;
-    case 'price-desc':
-      result.sort((a, b) => b.price - a.price);
-      break;
-    case 'rating-desc':
-      result.sort((a, b) => b.rating - a.rating);
-      break;
-    case 'rating-asc':
-      result.sort((a, b) => a.rating - b.rating);
-      break;
-    default:
-      break;
-  }
+  const sortProducts = {
+    'price-asc': (a, b) => a.price - b.price,
+    'price-desc': (a, b) => b.price - a.price,
+    'rating-desc': (a, b) => b.rating - a.rating,
+    'rating-asc': (a, b) => a.rating - b.rating,
+  }[state.sort];
+
+  result.sort((a, b) => {
+    const trendingOrder = Number(b.rating >= TRENDING_RATING) - Number(a.rating >= TRENDING_RATING);
+    return trendingOrder || (sortProducts ? sortProducts(a, b) : 0);
+  });
 
   state.filteredProducts = result;
   state.visibleCount = 8;
@@ -189,7 +264,11 @@ async function fetchProducts() {
 
     const errorElement = document.getElementById('errorMessage');
     if (errorElement) {
-      errorElement.textContent = error.message || 'Terjadi masalah saat memuat produk.';
+      errorElement.textContent = window.location.protocol === 'file:'
+        ? 'Browser membatasi akses API saat halaman dibuka langsung. Jalankan melalui server lokal, misalnya Live Server di VS Code.'
+        : error.message === 'Failed to fetch'
+          ? 'Tidak dapat terhubung ke DummyJSON. Periksa koneksi internet lalu coba lagi.'
+          : error.message || 'Terjadi masalah saat memuat produk.';
     }
 
     if (errorState) {
@@ -223,8 +302,7 @@ function addToCart(productId) {
     });
   }
 
-  localStorage.setItem(CART_KEY, JSON.stringify(cartItems));
-  updateCartUI();
+  saveCartItems(cartItems);
 }
 
 function openProductModal(productId) {
@@ -277,16 +355,19 @@ function bindCatalogEvents() {
   const modalOverlay = document.getElementById('modalOverlay');
   const modalCloseButton = document.getElementById('modalCloseButton');
   const modalAddCartButton = document.getElementById('modalAddCartButton');
+  const cartButton = document.getElementById('cartButton');
+  const cartOverlay = document.getElementById('cartOverlay');
+  const cartCloseButton = document.getElementById('cartCloseButton');
+  const cartItemsElement = document.getElementById('cartItems');
+  const clearCartButton = document.getElementById('clearCartButton');
 
   if (searchInput) {
-    let timeoutId = null;
-    searchInput.addEventListener('input', (event) => {
-      clearTimeout(timeoutId);
-      timeoutId = setTimeout(() => {
-        state.search = event.target.value.trim();
-        applyFiltersAndRender();
-      }, 350);
-    });
+    const handleSearch = debounce((event) => {
+      state.search = event.target.value.trim();
+      applyFiltersAndRender();
+    }, 350);
+
+    searchInput.addEventListener('input', handleSearch);
   }
 
   if (categoryFilter) {
@@ -305,7 +386,7 @@ function bindCatalogEvents() {
 
   if (loadMoreButton) {
     loadMoreButton.addEventListener('click', () => {
-      state.visibleCount += 8;
+      state.visibleCount += 5;
       renderProducts();
     });
   }
@@ -316,6 +397,34 @@ function bindCatalogEvents() {
 
   if (logoutButton) {
     logoutButton.addEventListener('click', handleLogout);
+  }
+
+  if (cartButton) {
+    cartButton.addEventListener('click', () => setCartOpen(true));
+  }
+
+  if (cartOverlay) {
+    cartOverlay.addEventListener('click', () => setCartOpen(false));
+  }
+
+  if (cartCloseButton) {
+    cartCloseButton.addEventListener('click', () => setCartOpen(false));
+  }
+
+  if (cartItemsElement) {
+    cartItemsElement.addEventListener('click', (event) => {
+      const decreaseButton = event.target.closest('[data-cart-decrease]');
+      const increaseButton = event.target.closest('[data-cart-increase]');
+      const removeButton = event.target.closest('[data-cart-remove]');
+
+      if (decreaseButton) updateCartQuantity(Number(decreaseButton.dataset.cartDecrease), -1);
+      if (increaseButton) updateCartQuantity(Number(increaseButton.dataset.cartIncrease), 1);
+      if (removeButton) removeFromCart(Number(removeButton.dataset.cartRemove));
+    });
+  }
+
+  if (clearCartButton) {
+    clearCartButton.addEventListener('click', clearCart);
   }
 
   if (productGrid) {

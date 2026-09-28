@@ -7,12 +7,12 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="style2.css?v=5" />
+  <link rel="stylesheet" href="style2.css?v=15" />
 </head>
 <body>
-  <header class="navbar" id="navbar">
+  <header class="navbar">
     <div class="navbar__brand">
-      <a href="Catalogpage.html?v=5" class="navbar__logo">Asthmazon</a>
+      <a href="Catalogpage.html?v=15" class="navbar__logo">Asthmazon</a>
     </div>
 
     <div class="navbar__search">
@@ -20,7 +20,7 @@
     </div>
 
     <div class="navbar__actions">
-      <button type="button" id="cartButton" class="cart-button" aria-label="Keranjang belanja">
+      <button type="button" id="cartButton" class="cart-button" aria-label="Buka keranjang belanja" aria-expanded="false" aria-controls="cartModal">
         <span class="cart-icon" aria-hidden="true">🛒</span>
         <span id="cartBadge" class="cart-badge">0</span>
       </button>
@@ -29,7 +29,7 @@
     </div>
   </header>
 
-  <section class="toolbar" id="toolbar">
+  <section class="toolbar">
     <div class="toolbar__filters">
       <div class="toolbar__field">
         <label for="categoryFilter" class="toolbar__label">Kategori</label>
@@ -74,6 +74,21 @@
     </div>
   </main>
 
+  <div id="cartModal" class="modal cart-modal" hidden aria-hidden="true">
+    <div class="modal__overlay" id="cartOverlay"></div>
+    <section class="cart-panel" role="dialog" aria-modal="true" aria-labelledby="cartTitle">
+      <header class="cart-panel__header">
+        <h2 id="cartTitle">Keranjang Belanja</h2>
+        <button type="button" id="cartCloseButton" class="modal__close" aria-label="Tutup keranjang">&times;</button>
+      </header>
+      <div id="cartItems" class="cart-items" aria-live="polite"></div>
+      <footer class="cart-panel__footer">
+        <div class="cart-total"><span>Total</span><strong id="cartTotal">$0</strong></div>
+        <button type="button" id="clearCartButton" class="btn btn--secondary">Kosongkan Keranjang</button>
+      </footer>
+    </section>
+  </div>
+
   <div id="productModal" class="modal" hidden aria-hidden="true">
     <div class="modal__overlay" id="modalOverlay"></div>
     <div class="modal__content" role="dialog" aria-modal="true" aria-labelledby="modalProductName">
@@ -96,6 +111,6 @@
     </div>
   </div>
 
-  <script src="script.js?v=2" defer></script>
+  <script src="script.js?v=9" defer></script>
 </body>
 </html>
